@@ -1,0 +1,54 @@
+@baseUrl = http://localhost:3000
+
+###create Todo1
+# @name createTodo
+POST {{baseUrl}}/todos
+Content-Type: application/json
+
+{
+    "title": "Write API documentation",
+    "description": "OpenAPI + ReadME examples",
+    "state": "todo"
+}
+###create Todo2
+POST {{baseUrl}}/todos
+Content-Type: application/json
+
+{
+    "description": "This should fail"
+}
+
+###create Todo3
+POST {{baseUrl}}/todos
+Content-Type: application/json
+
+{
+    "title": "Invalid state test",
+    "state": "in-progress"
+}
+
+###get all Todos
+GET {{baseUrl}}/todos
+
+###get Todos filtered by state
+GET {{baseUrl}}/todos?state=todo
+
+###get single Todo
+GET {{baseUrl}}/todos/{{createTodo.response.body.id}}
+
+###get non-existent Todo
+GET {{baseUrl}}/todos/1000
+
+###update Todo
+PUT {{baseUrl}}/todos/{{createTodo.response.body.id}}
+Content-Type: application/json
+
+{
+    "state": "wrong_state"
+}
+
+###delete Todo
+DELETE {{baseUrl}}/todos/{{createTodo.response.body.id}}
+
+###delete non-existent Todo
+DELETE {{baseUrl}}/todos/1000
