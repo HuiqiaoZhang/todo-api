@@ -12,6 +12,10 @@ I learned how to implement CRUD operations, including POST,GET, PUT, DELETE.
 I also learned HTTP status codes: 201 for creation, 400 for bad requests, 404 for missing items.
 I learned how to test my endpoints using REST Client.
 
+## Installing Dependencies
+To install all required dependencies (Express, UUID, and supertest)
+run: npm install --save-dev supertest
+
 ## How to run tests
 -Unit tests: node tests/unit.test.js
 -Integration tests: node tests/integration.test.js
