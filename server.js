@@ -109,6 +109,24 @@ app.post('/todos', (req, res) => {
     res.status(201).json(newTodo);
 });
 
+/**
+ * @openapi
+ * /todos/{id}:
+ *  get:
+ *      summary: Get a single todo by ID
+ *      parameters: 
+ *          - in: path
+ *            name: id
+ *            required: true
+ *            schema: 
+ *              type: string
+ *      responses:
+ *        200:
+ *          description: Successful response.
+ *        404:
+ *          description: Not Found
+ */
+
 app.get('/todos/:id', (req,res) => {
     const todo = todoService.findTodoById(req.params.id);
 
@@ -116,6 +134,37 @@ app.get('/todos/:id', (req,res) => {
         return res.status(404).json({ error: "Not Found" });
     res.status(200).json(todo);
 });
+
+/**
+ * @openapi
+ * /todos/{id}:
+ *   put:
+ *      summary: Update a todo by ID
+ *      parameters: 
+ *          - in: path
+ *            name: id
+ *            required: true
+ *            schema: 
+ *              type: string
+ *      requestBody:
+ *        required: true
+ *        content: 
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                title:
+ *                  type: string
+ *                description:
+ *                  type: string
+ *                state:
+ *                  type: string
+ *      responses:
+ *        200:
+ *          description: Updated
+ *        404:
+ *          description: Not Found
+ */
 
 app.put('/todos/:id', (req,res) => {
     const index = todoService.findTodoIndex(req.params.id);
@@ -136,6 +185,24 @@ app.put('/todos/:id', (req,res) => {
     const updatedTodo = todoService.updateTodo(index, updateData);
     res.status(200).json(updatedTodo);
 });
+
+/**
+ * @openapi
+ * /todos/{id}:
+ *   delete:
+ *      summary: Delete a todo by ID
+ *      parameters: 
+ *          - in: path
+ *            name: id
+ *            required: true
+ *            schema: 
+ *              type: string
+ *      responses:
+ *        204:
+ *          description: Deleted successfully
+ *        404:
+ *          description: Not Found
+ */
 
 app.delete('/todos/:id', (req,res) => {
     const index = todoService.findTodoIndex(req.params.id);
