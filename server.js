@@ -1,8 +1,103 @@
 const express = require('express');
 const todoService = require('./todoService');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
 
 const app = express();
 app.use(express.json());
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Todo API',
+            version: '1.0.0',
+            description: 'A simple Todo API documented with Swagger',
+        },
+        servers: [
+            {
+                url: 'http://localhost:3000'
+            }
+        ],
+    },
+    apis: ['./server.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * @openapi
+ * /todos:
+ *  get:
+ *      summary: Get all todos
+ *      description: Returns a list of todos. Supports JSON and CSV formats.
+ *      parameters: 
+ *          - in: query
+ *            name: state
+ *            schema: 
+ *              type: string
+ *            description: Filter todos by state (e.g. todo, doing, done)
+ *      responses:
+ *        200:
+ *          description: Successful response.
+ *          content: 
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  type: object
+ *            text/csv:
+ *              schema: 
+ *                type: string
+ *                example: "id, title, state\n1,Study API,todo"           
+ */
+
+app.get('/todos', (req, res) => {
+    let todos = todoService.getAllTodos();
+    const stateQuery = req.query.state;
+
+    if (stateQuery) {
+        const states = stateQuery.split('|');
+        const filtered = todos.filter(t => states.includes(t.state));
+    }
+    
+    const acceptFormat = req.accepts(['application/json', 'text/csv']);
+
+    if (acceptFormat === 'text/csv') {
+        const csvData = todoService.toCsv(todos);
+        res.set('Content-Type', 'text/csv');
+        return res.status(200).send(csvData);
+    }
+    res.status(200).json(todos);
+})
+
+/**
+ * @openapi
+ * /todos:
+ *  post:
+ *      summary: create a new todo
+ *      requestBody:
+ *        required: true
+ *        content: 
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              required:
+ *                - title
+ *              properties:
+ *                title:
+ *                  type: string
+ *                description:
+ *                  type: string
+ *                state:
+ *                  type: string
+ *        responses:
+ *          201:
+ *            description: Created
+ *          400:
+ *            description: Bad Request        
+ */
 
 app.post('/todos', (req, res) => {
     const errorMsg = todoService.validateTodoData(req.body);
@@ -12,18 +107,6 @@ app.post('/todos', (req, res) => {
     const { title, description, state, dueDate } = req.body;
     const newTodo = todoService.createTodo(title, description, state, dueDate);
     res.status(201).json(newTodo);
-});
-
-app.get('/todos', (req, res) => {
-    let todos = todoService.getAllTodos();
-    const stateQuery = req.query.state;
-
-    if (stateQuery) {
-        const states = stateQuery.split('|');
-        const filtered = todos.filter(t => states.includes(t.state));
-        return res.status(200).json(filtered);
-    }
-    res.status(200).json(todos);
 });
 
 app.get('/todos/:id', (req,res) => {
@@ -66,5 +149,5 @@ app.delete('/todos/:id', (req,res) => {
 module.exports = app;
 
 if (require.main === module) {
-    app.listen(3000, () => console.log('Server running on port 3000'));
+    app.listen(3000, () => console.log('Server running on http://localhost:3000'));
 }

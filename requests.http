@@ -52,3 +52,7 @@ DELETE {{baseUrl}}/todos/{{createTodo.response.body.id}}
 
 ###delete non-existent Todo
 DELETE {{baseUrl}}/todos/1000
+
+###Test CSV Format
+GET {{baseUrl}}/todos
+Accept: text/csv

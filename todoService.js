@@ -59,6 +59,27 @@ function deleteTodo(index) {
   todos.splice(index, 1);
 }
 
+function toCsv(todos) {
+  const headers = [
+    "id",
+    "title",
+    "description",
+    "state",
+    "createdAt",
+    "updatedAt"
+  ];
+
+  const rows = todos.map(item => [
+    item.id,
+    `"${item.title || ''}"`,
+    `"${item.description || ''}"`,
+    item.state,
+    new Date(item.createdAt).toISOString(),
+    new Date(item.updatedAt).toISOString()
+  ]);
+  return [headers, ...rows].map(e => e.join(",")).join("\n");
+}
+
 module.exports = {
   validateTodoData,
   createTodo,
@@ -67,5 +88,6 @@ module.exports = {
   findTodoIndex,
   updateTodo,
   deleteTodo,
+  toCsv,
   ALLOWED_STATES
 };

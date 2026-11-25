@@ -19,3 +19,7 @@ run: npm install --save-dev supertest
 ## How to run tests
 -Unit tests: node tests/unit.test.js
 -Integration tests: node tests/integration.test.js
+
+## Document server endpoints with OpenAPI OAD
+run: npm install swagger-ui-express swagger-jsdoc
+API documentation available at: http://localhost:3000/doc
