@@ -23,3 +23,7 @@ run: npm install --save-dev supertest
 ## Document server endpoints with OpenAPI OAD
 run: npm install swagger-ui-express swagger-jsdoc
 API documentation available at: http://localhost:3000/doc
+
+## Add token-based authentication
+Authentication: JWT(Access & Refresh Tokens).
+Passwords are hardcoded for demo purposes (admin/password123).

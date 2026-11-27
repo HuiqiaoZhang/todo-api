@@ -1,58 +1,46 @@
 @baseUrl = http://localhost:3000
 
-###create Todo1
-# @name createTodo
-POST {{baseUrl}}/todos
+### Login
+# @name loginRequest
+POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-    "title": "Write API documentation",
-    "description": "OpenAPI + ReadME examples",
-    "state": "todo"
-}
-###create Todo2
-POST {{baseUrl}}/todos
-Content-Type: application/json
-
-{
-    "description": "This should fail"
+    "username": "admin",
+    "password": "password123"
 }
 
-###create Todo3
-POST {{baseUrl}}/todos
-Content-Type: application/json
-
-{
-    "title": "Invalid state test",
-    "state": "in-progress"
-}
-
-###get all Todos
+### Try to GET todos WITHOUT a token
 GET {{baseUrl}}/todos
 
-###get Todos filtered by state
-GET {{baseUrl}}/todos?state=todo
+### GET todos WITH the Access Token
+GET {{baseUrl}}/todos
+Authorization: Bearer {{loginRequest.response.body.accessToken}}
 
-###get single Todo
-GET {{baseUrl}}/todos/{{createTodo.response.body.id}}
+### CREATE a new todo
+POST {{baseUrl}}/todos
+Content-Type: application/json
+Authorization: Bearer {{loginRequest.response.body.accessToken}}
 
-###get non-existent Todo
-GET {{baseUrl}}/todos/1000
+{
+    "title": "Learn JWT Aurh",
+    "state": "doing"
+}
 
-###update Todo
-PUT {{baseUrl}}/todos/{{createTodo.response.body.id}}
+### REFRESH the Access Token
+POST {{baseUrl}}/refresh
+
+### LOGOUT
+POST {{baseUrl}}/logout
+
+### TRY to REFRESH after logout
+POST {{baseUrl}}/refresh
+
+### TEST Rate Limiting
+POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-    "state": "wrong_state"
+    "username": "hacker",
+    "password": "wrongpassword"
 }
-
-###delete Todo
-DELETE {{baseUrl}}/todos/{{createTodo.response.body.id}}
-
-###delete non-existent Todo
-DELETE {{baseUrl}}/todos/1000
-
-###Test CSV Format
-GET {{baseUrl}}/todos
-Accept: text/csv
